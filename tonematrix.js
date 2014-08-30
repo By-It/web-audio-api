@@ -5,11 +5,11 @@ var ToneMatrix = (function ()
 		69 + 12, 67 + 12, 65 + 12, 62 + 12, 60 + 12,
 		69, 67, 65, 62, 60
 	];
-	var ToneMatrix = function ()
+
+	var Class = function ()
 	{
 		this.output = new AudioBuffer( bufferSize );
 		this.voices = [];
-
 		this.groove = Groove.Identity;
 	};
 
@@ -17,8 +17,8 @@ var ToneMatrix = (function ()
 	{
 		this.phase = 0.0;
 		this.phaseIncr = frequency / sampleRate;
-		this.gainL = 1.0 - Math.pow( ( panning + 1 ) / 2.0, 2.0 ) * volume;
-		this.gainR = 1.0 - Math.pow( ( panning - 1 ) / 2.0, 2.0 ) * volume;
+		this.gainL = 1.0 - Math.pow( ( panning + 1.0 ) / 2.0, 2.0 ) * volume;
+		this.gainR = 1.0 - Math.pow( ( panning - 1.0 ) / 2.0, 2.0 ) * volume;
 		this.remaining = timeInfo.millisToNumFrames( 500.0 );
 		this.durationInv = 0.4 / this.remaining;
 	};
@@ -71,7 +71,7 @@ var ToneMatrix = (function ()
 		}
 	};
 
-	return ToneMatrix;
+	return Class;
 })();
 
 var toneMatrix = new ToneMatrix();

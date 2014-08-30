@@ -1,3 +1,5 @@
+// Static Delay
+//
 var Delay = (function() {
   var Delay = function(size) {
     this.size = Math.round( size );

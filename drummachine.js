@@ -119,8 +119,24 @@ Midi.noteOn = function ( note, velocity )
 	machine.processNote( note, velocity );
 };
 
+var minFrequency = 60.0;
+var maxFrequency = 18000.0;
+var biquad = new Biquad();
+biquad.lowPass( maxFrequency, sampleRate, Math.sqrt( 2.0 ) );
+
 var render = function ( barFrom, barTo )
 {
 	machine.process( barFrom, barTo );
-	return machine.output;
+	biquad.process( machine.output, 0, bufferSize );
+	return biquad.output;
+};
+
+Midi.anyMessage = function( cmd, p0, p1 )
+{
+	if( cmd == 0xB0 )
+	{
+		var control = p1 / 127.0;
+		var frequency = Math.min( minFrequency * Math.exp( control * Math.log( maxFrequency / minFrequency ) ), maxFrequency );
+		biquad.lowPass( frequency, sampleRate, Math.sqrt( 2.0 ) );
+	}
 };
