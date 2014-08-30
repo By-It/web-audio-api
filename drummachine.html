@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>Drum machine</title>
   <link rel="stylesheet" href="style.css">
   <script src="audio.js"></script>
   <script src="midi.js"></script>
@@ -9,6 +10,17 @@
   <script>
     window.onload = function ()
     {
+      document.getElementById( "transport" ).addEventListener("change", function(e){
+        if( e.target.checked)
+        {
+          timeInfo.position = 0.0;
+          timeInfo.transporting = true;
+        }
+        else
+        {
+          timeInfo.transporting = false;
+        }
+      });
       document.getElementById( "buffer-size" ).innerHTML = bufferSize;
       document.getElementById( "sample-rate" ).innerHTML = sampleRate;
       var bpmInput = document.getElementById( "bpm-input" );
@@ -35,7 +47,8 @@
   </script>
 </head>
 <body>
-<h1>Minimal Audio</h1>
+<h1>Drum Machine</h1>
+<input type="checkbox" id="transport" value="false">Playing<br>
 BufferSize: <span id="buffer-size"></span>
 <br>SampleRate: <span id="sample-rate"></span>
 <br>

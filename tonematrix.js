@@ -10,7 +10,7 @@ var ToneMatrix = (function ()
 		this.output = new AudioBuffer( bufferSize );
 		this.voices = [];
 
-		this.groove = Groove.Shuffle;
+		this.groove = Groove.Identity;
 	};
 
 	var Voice = function ( frequency, volume, panning )
@@ -76,7 +76,7 @@ var ToneMatrix = (function ()
 
 var toneMatrix = new ToneMatrix();
 
-/*toneMatrix.pattern = [
+toneMatrix.pattern = [
  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -93,7 +93,7 @@ var toneMatrix = new ToneMatrix();
  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
  [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
- ];*/
+ ];
 
 var render = function ( barFrom, barTo )
 {

@@ -1,3 +1,5 @@
+// Simple Drum-machine
+//
 var DrumMachine = (function ()
 {
 	var DrumMachine = function ()
@@ -5,6 +7,7 @@ var DrumMachine = (function ()
 		this.output = new AudioBuffer( bufferSize );
 		this.voices = [];
 		this.groove = Groove.Identity;
+//		this.groove = new Groove.Shuffle( 0.6, 1.0 / 8.0 );
 		this.pattern = [];
 		this.samples = [];
 	};
@@ -59,12 +62,28 @@ var DrumMachine = (function ()
 			if( !this.samples )
 				return;
 			for( var i = 0; i < this.pattern.length; ++i )
+			{
+				var sample = this.samples[i];
+				if( !sample )
+					continue;
 				if( this.pattern[i][event.index % 16] )
-					this.voices.push( new Voice( this.samples[i], 1.0 ) );
+					this.voices.push( new Voice( sample, 1.0 ) );
+			}
 		},
 		processNote: function ( note, velocity )
 		{
-			this.voices.push( new Voice( this.samples[note % this.samples.length], velocity ) );
+			var sample = this.samples[note % this.samples.length];
+			if( !sample )
+				return;
+			this.voices.push( new Voice( sample, velocity ) );
+		},
+		loadSample: function ( url, index )
+		{
+			var samples = this.samples;
+			loadSample( url, function ( buffer )
+			{
+				samples[index] = buffer;
+			} );
 		}
 	};
 
@@ -73,23 +92,35 @@ var DrumMachine = (function ()
 
 var machine = new DrumMachine();
 
-loadSample( "http://files.andre-michelle.com/samples/808.kick.wav", function ( buffer )
-{
-	console.log( buffer );
-	machine.samples[0] = buffer;
-} );
+var sampleUrls = [
+	"808.kick.wav",
+	"808.snare.wav",
+	"808.rim.wav",
+	"808.clap.wav",
+	"808.closed.wav",
+	"808.opened.wav",
+	"android.wav",
+];
+
+for( var i = 0; i < sampleUrls.length; ++i )
+	machine.loadSample( "http://files.andre-michelle.com/samples/" + sampleUrls[i], i );
 
 machine.pattern = [
-	[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1]
+	[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1],
+	[0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+	[0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+	[0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0],
+	[0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0]
 ];
+
+Midi.noteOn = function ( note, velocity )
+{
+	machine.processNote( note, velocity );
+};
 
 var render = function ( barFrom, barTo )
 {
 	machine.process( barFrom, barTo );
 	return machine.output;
-};
-
-Midi.noteOn = function ( note, velocity )
-{
-	machine.processNote( note, velocity );
 };

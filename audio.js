@@ -1,13 +1,13 @@
 // Minimal Audio Setup
 var audioContext = new (window.AudioContext || window.webkitAudioContext)();
 var sampleRate = audioContext.sampleRate;
-var scriptProcessor = audioContext.createScriptProcessor( 2048, 0, 2 );
+var scriptProcessor = audioContext.createScriptProcessor( 1024, 0, 2 );
 var bufferSize = scriptProcessor.bufferSize;
 scriptProcessor.connect( audioContext.destination );
 scriptProcessor.onaudioprocess = function ( event )
 {
 	var barFrom = timeInfo.barPosition;
-	var barTo = barFrom + timeInfo.numFramesToBars( bufferSize );
+	var barTo = barFrom + (timeInfo.transporting ? timeInfo.numFramesToBars( bufferSize ) : 0.0);
 
 	// function 'render' needs to be defined outside
 	var buffer = render( barFrom, barTo );
@@ -37,6 +37,7 @@ var render = function ( barFrom, barTo ) { /* Define rendering here */ };
 var timeInfo = {
 	bpm: 120.0,
 	barPosition: 0.0,
+	transporting: false,
 	barsToNumFrames: function ( bars )
 	{
 		return (bars * sampleRate * 240.0) / this.bpm;

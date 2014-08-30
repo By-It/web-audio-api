@@ -49,10 +49,17 @@ Groove.Identity = new Groove(
 		1.0
 );
 
-Groove.Shuffle = new (function ( amount )
+Groove.Shuffle = (function ()
 {
-	return new Groove(
-			function ( x ) { return Math.pow( x, ( 1.0 - amount ) * 2.0 ) },
-			function ( y ) { return Math.pow( y, 0.5 / ( 1.0 - amount ) ) },
-			1.0 / 8.0 );
-} )( 0.6 );
+	var Class = function ( amount, duration )
+	{
+		this.amount = amount;
+		this.duration = duration;
+	};
+
+	var prototype = Class.prototype = new Groove( this.fx, this.fy, this.duration );
+	prototype.fx = function ( x ) { return Math.pow( x, ( 1.0 - this.amount ) * 2.0 ) };
+	prototype.fy = function ( y ) { return Math.pow( y, 0.5 / ( 1.0 - this.amount ) ) };
+
+	return Class;
+})();
