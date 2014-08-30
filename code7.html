@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Code 7</title>
+  <script>
+    window.onload = function()
+    {
+      var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      var sampleRate = audioContext.sampleRate;
+      var seconds = 0.0;
+      var scriptProcessor = audioContext.createScriptProcessor( 2048, 1, 1 );
+      var bufferSize = scriptProcessor.bufferSize;
+
+      scriptProcessor.onaudioprocess = function ( event )
+      {
+        var data = event.outputBuffer.getChannelData( 0 );
+        for( var i = 0; i < bufferSize; ++i )
+          data[i] = f( seconds += 1.0 / sampleRate );
+        render( data ); // NOTE: You should never do this in onaudioprocess!
+      };
+
+      var e = document.getElementById( "dsp" );
+      var m = document.getElementById( "message" );
+      var b = document.getElementById( "toggle-button" );
+      var w = document.getElementById( "waveform" );
+      var f = function ( t ) { return 0.0 };
+
+      var isPlaying = false;
+      function togglePlayback()
+      {
+        if( isPlaying )
+        {
+          scriptProcessor.disconnect( audioContext.destination );
+          isPlaying = false;
+          b.value = "PLAY";
+        }
+        else
+        {
+          seconds = 0.0;
+          scriptProcessor.connect( audioContext.destination );
+          isPlaying = true;
+          b.value = "STOP";
+        }
+      }
+
+      function render( values )
+      {
+        var width = w.width;
+        var height = w.height;
+        var heightHalf = height / 2;
+        var ratio = bufferSize / width;
+        var ctx = w.getContext( "2d" );
+        ctx.clearRect( 0, 0, width, height );
+        ctx.lineWidth = 0.0;
+        ctx.strokeStyle = '#16d6ff';
+        ctx.beginPath();
+        ctx.moveTo( 0, heightHalf + values[0] * heightHalf );
+        for( var x = 0; x < width; ++x )
+          ctx.lineTo( x, heightHalf + Math.min( 1, Math.max( -1, values[Math.floor( x * ratio )] ) ) * heightHalf );
+        ctx.stroke();
+      }
+
+      function compile()
+      {
+        try
+        {
+          f = new Function( 't', "with(Math){" + e.value + "}" );
+          m.innerHTML = "";
+        }
+        catch( e )
+        {m.innerHTML = e.message;}
+      }
+
+      e.value = "return sin(220*t*2*PI)";
+      e.focus();
+      compile();
+
+      b.addEventListener( "click", togglePlayback );
+      e.addEventListener( "input", compile );
+    }
+  </script>
+  <style type="text/css">
+    html, body {
+      background: #1A1A1A;
+      margin: 0;
+      padding: 16px;
+      width: 90%;
+      height: 80%;
+      color: #16d6ff;
+      font-size: 24px;
+      font-family: "Open Sans";
+      overflow: hidden;
+    }
+
+    h1 {
+      line-height: 0px;
+    }
+
+    textarea {
+      width: 99%;
+      height: 5em;
+      color: #16d6ff;
+      font-size: 16px;
+      line-height: 18px;
+      background: black;
+      border-width: 0;
+      margin: 0;
+      padding: 4px;
+      border: none;
+      overflow: auto;
+      outline: none;
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+      box-shadow: none;
+      resize: none;
+    }
+
+    textarea::selection {
+      background: #999999;
+    }
+
+    canvas {
+      float: right;
+      background-color: black;
+    }
+
+    input#toggle-button {
+      width: 64px;
+      height: 32px;
+      border: 0;
+      color: #16d6ff;
+      margin-bottom: 8px;
+      background: black;
+      border-color: transparent;
+      cursor: pointer;
+      outline: 0;
+    }
+
+    label {
+      color: #ff6616;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body>
+<h1>Code 7</h1>
+<h5>drop your music</h5>
+<input type="button" value="START" id="toggle-button">
+<canvas id="waveform" width="384" height="32"></canvas>
+<textarea type="text" onLoad="focus(this);" name="dsp" id="dsp"></textarea>
+<textarea type="text">var q=1-(t*2.15)%1,s=sin,p=pow;
+return s(24*p(q,24))*.9</textarea>
+<textarea type="text">+3*s(p((q*4)%1,5)*3)*min(.1,max(-.1,(6+s(t*.5)*3)*s(40*(1+q)*s(690+q*3))))</textarea>
+<label id="message"></label>
+</body>
+</html>
