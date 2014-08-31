@@ -70,7 +70,7 @@ var DrumMachine = (function ()
 					this.voices.push( new Voice( sample, 1.0 ) );
 			}
 		},
-		processNote: function ( note, velocity )
+		processNoteOn: function ( note, velocity )
 		{
 			var sample = this.samples[note % this.samples.length];
 			if( !sample )
@@ -99,7 +99,7 @@ var sampleUrls = [
 	"808.clap.wav",
 	"808.closed.wav",
 	"808.opened.wav",
-	"android.wav",
+	"android.wav"
 ];
 
 for( var i = 0; i < sampleUrls.length; ++i )
@@ -116,7 +116,7 @@ machine.pattern = [
 
 Midi.noteOn = function ( note, velocity )
 {
-	machine.processNote( note, velocity );
+	machine.processNoteOn( note, velocity );
 };
 
 var minFrequency = 60.0;

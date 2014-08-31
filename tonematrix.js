@@ -65,7 +65,7 @@ var ToneMatrix = (function ()
 					this.voices.push( new Voice( noteToFrequency( Notes[i] ), 0.5, Math.random() - Math.random() ) );
 			}
 		},
-		processNote: function ( note, velocity )
+		processNoteOn: function ( note, velocity )
 		{
 			this.voices.push( new Voice( noteToFrequency( note ), velocity, Math.random() - Math.random() ) );
 		}
@@ -111,5 +111,5 @@ var render = function ( barFrom, barTo )
 
 Midi.noteOn = function ( note, velocity )
 {
-	toneMatrix.processNote( note, velocity );
+	toneMatrix.processNoteOn( note, velocity );
 };
