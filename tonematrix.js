@@ -39,7 +39,7 @@ var ToneMatrix = (function ()
 		}
 	};
 
-	ToneMatrix.prototype = {
+	Class.prototype = {
 		process: function ( from, to )
 		{
 			var o = this;
@@ -101,13 +101,13 @@ var render = function ( barFrom, barTo )
 	return toneMatrix.output;
 };
 
-/*var delay = new Delay(timeInfo.barsToNumFrames(3.0 / 16.0));
+var delay = new Delay(timeInfo.barsToNumFrames(3.0 / 16.0));
 
  var render = function(barFrom, barTo) {
  toneMatrix.process(barFrom, barTo);
  delay.processAudio(toneMatrix.output, 0, bufferSize);
  return delay.output;
- };*/
+ };
 
 Midi.noteOn = function ( note, velocity )
 {
