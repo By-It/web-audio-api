@@ -6,8 +6,13 @@ var DrumMachine = (function ()
 	{
 		this.output = new AudioBuffer( bufferSize );
 		this.voices = [];
+<<<<<<< HEAD
 //		this.groove = Groove.Identity;
 		this.groove = new Groove.Shuffle( 0.6, 1.0 / 8.0 );
+=======
+		this.groove = Groove.Identity;
+ 		this.groove = new Groove.Shuffle( 0.6, 1.0 / 8.0 );
+>>>>>>> a9930fbd98e3f11be18862d771e12cecd4f3bf86
 		this.pattern = [];
 		this.samples = [];
 	};
